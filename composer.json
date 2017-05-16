@@ -1,0 +1,22 @@
+{
+    "name": "rizalio/connector",
+    "description": "The PHP Packages to build connection & run API Functionality for VPS Provider",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^6.2",
+        "php": ">=5.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "rizalio",
+            "email": "me@rizalfakhri.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+    	"psr-4": {
+    		"Connector\\": "src/"
+    	}
+    }
+}

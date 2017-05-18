@@ -2,10 +2,11 @@
 
 namespace Connector;
 
-use Provider\DigitalOcean;
-use Provider\Vultr;
-use Provider\Linode;
-use Exception\invalidProviderException;
+use \Connector\Provider\DigitalOcean;
+use \Connector\Provider\Vultr;
+use \Connector\Provider\Linode;
+use \Connector\Exception\notAllowedProviderException;
+
 
 class Client 
 {
@@ -37,6 +38,15 @@ class Client
 	];
 
 	/**
+	 * Result Handler
+	 *
+	 * @var $handler
+	 * @return JSON
+	 */
+
+	public $get;
+
+	/**
 	 * Set provider.
 	 *
 	 * @param string $provider
@@ -50,30 +60,11 @@ class Client
 
 		if(!in_array($provider,$this->allowedProvider))
 		{
-			throw new invalidProviderException("Provider " . $this->provider . " is not allowed!");
+			throw new notAllowedProviderException("Provider " . $this->provider . " is not allowed!");
 			
 		}
 
-		if($this->provider == 'digitalocean')
-		{
-			$this->provider = 'DigitalOcean';
-		}
-
-		return $this->formatProvider($this->provider);
-	}
-
-	/**
-	 * Format the provider name with ucfirst()
-	 *
-	 * @param string $provider
-	 * @return setProvider() method.
-	 */
-
-	public function formatProvider($provider)
-	{
-		$this->provider = ucfirst($provider);
-
-		return $this->setProvider();
+		return $this->setProvider($this->provider);
 	}
 
 	/**
@@ -85,8 +76,31 @@ class Client
 
 	public function setProvider()
 	{
-		return new $this->provider($this->apiKey);
+		switch ($this->provider) {
+			case 'digitalocean':
+				return $this->run(DigitalOcean::class,$this->apiKey);
+				break;
+			case 'vultr':
+				return $this->run(Vultr::class,$this->apiKey);
+				break;
+			case 'linode':
+				return $this->run(Linode::class,$this->apiKey);
+				break;
+			default:
+				throw new notAllowedProviderException("Provider " . $this->provider . " not allowed!");
+				break;
+		}
 	}
 
+	/**
+	 * Run!
+	 *
+	 * @return Object
+	 */
+
+	public function run($provider,$apiKey)
+	{
+		return $this->get = new $provider($apiKey);
+	}
 
 }
